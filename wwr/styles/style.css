@@ -1,19 +1,77 @@
+/* Font stuff */
+@import url('https://fonts.googleapis.com/css2?family=Mooli&family=Raleway:ital,wght@0,400;1,300&display=swap');
+/* --heading-font: "Raleway";
+--paragraph-font: Mooli; */
+
+/* Content */
+
 #content{
     max-width: 1600px;
     margin: 0 auto;
 }
 
+/* Body */
+
+body{
+    background-color: #848FA5;
+    font-family: "Mooli";
+    font-size: 22px;
+    margin: 0;
+    padding: 0;
+}
+
+/* Header Stuff*/
+
+header{
+    background-color: #848FA5;
+}
+
+#logo_link{
+    padding-top: 5px;
+}
+
+.logo{
+    width: 80px;
+}
+
+.home-title{
+    color: #2D2D2A;
+    font-family: "Raleway";
+}
+
+/* h & p */
+
+h2{
+    margin: 0;
+}
+
+h4{
+    color: black;
+}
+
+.msg h2{
+    color: black;
+    font-family: "Raleway";
+}
+.msg p{
+    color: black;
+}
+
+/* nav */
+
 nav a{
     text-align: center;
-    color: #2D2D2A;
+    color: black;
     text-decoration: none;
 }
-#hero-msg h1, #hero-msg h4{
-    text-align: center;
+
+nav a:hover{
+    background-color: #00067e;
+    color: white;
 }
-.button-box{
-    text-align: center;
-}
+
+/* Main */
+
 main section{
     text-align: center;
 }
@@ -21,46 +79,46 @@ main section{
 #background {
     height: 725px;
     background-color: #848FA5;
+} 
+
+#hero-img{
+    width: 100%;
 }
 
-body{
-    background-color: #848FA5;
+#hero-msg h1, #hero-msg h4{
+    text-align: center;
 }
-header{
-    background-color: #848FA5;
+
+.icon {
+    width: 80px;
 }
-nav a:hover{
-    background-color: #E5DCC5;
-    color: #2D2D2A;
+
+/* Book & Join */
+
+.button-box{
+    text-align: center;
 }
+
 .book, .join{
     background-color: #848FA5;
     color: #2D2D2A;
     text-decoration: none;
+    border-radius: 5px;
 }
 .book:hover, .join:hover{
-    background-color: #E5DCC5;
-    color: #2D2D2A;
+    background-color: #00067e;
+    color: white;
 }
 .msg{
     background-color: #848FA5;
 }
+
+/* Footer */
 footer{
     background-color: #848FA5;
     color: #2D2D2A;
 }
-.home-title{
-    color: #2D2D2A;
-}
-h4{
-    color: #2D2D2A;
-}
-.msg h2{
-    color: #2D2D2A;
-}
-.msg p{
-    color: #2D2D2A;
-}
+
 footer a{
     color: #2D2D2A;
     text-decoration: none;
@@ -69,15 +127,7 @@ footer a:hover{
     color: #2D2D2A;
     text-decoration: underline;
 }
-.logo{
-    width: 80px;
-}
-.icon {
-    width: 80px;
-}
-#hero-img{
-    width: 100%;
-}
+
 footer p {
     font-size: 1.2em;
 }
