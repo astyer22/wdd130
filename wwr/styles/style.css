@@ -37,7 +37,7 @@ header{
 }
 
 .home-title{
-    color: #2D2D2A;
+    color: black;
     font-family: "Raleway", sans-serif; 
     font-size: 2em;
     margin-top: 10px;
@@ -74,7 +74,7 @@ nav a{
 }
 
 nav a:hover{
-    background-color: #00067e;
+    background-color: #848FA5;
     color: white;
 }
 
@@ -138,7 +138,7 @@ main section img {
     margin-top: 50px;
 }
 .book:hover, .join:hover{
-    background-color: #00067e;
+    background-color: #C14953;
     color: white;
 }
 .msg{
