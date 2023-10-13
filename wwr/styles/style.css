@@ -23,7 +23,7 @@ body{
 /* Header Stuff*/
 
 header{
-    background-color: #848FA5;
+    background-color: #83c08c;
 }
 
 #logo_link{
@@ -70,7 +70,7 @@ nav a{
     text-align: center;
     color: black;
     text-decoration: none;
-    padding: 35px
+    padding: 35px;
 }
 
 nav a:hover{
