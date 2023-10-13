@@ -6,10 +6,10 @@ Fonts are separated by a & */
 @import url('https://fonts.googleapis.com/css2?family=Mooli&family=Raleway:ital,wght@0,400;1,300&display=swap');
 :root {
   /* change the values below to your colors from your palette */
-  --primary-color: #C14953 ;
+  --primary-color: #00067e ;
   --secondary-color: #848FA5;
-  --accent1-color: #E5DCC5 ;
-  --accent2-color: #2D2D2A;
+  --accent1-color: #83c08c;
+  --accent2-color: black;
 
   /* change the values below to your chosen font(s) */
   --heading-font: "Raleway";
