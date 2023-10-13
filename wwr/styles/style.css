@@ -136,6 +136,7 @@ main section img {
     font-size: 18px;
     padding: 15px 30px;
     margin-top: 50px;
+    color: black;
 }
 .book:hover, .join:hover{
     background-color: #C14953;
