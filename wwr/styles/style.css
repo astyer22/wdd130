@@ -130,7 +130,6 @@ main section img {
 
 .book, .join{
     background-color: #848FA5;
-    color: #2D2D2A;
     text-decoration: none;
     border-radius: 5px;
     font-family: "Raleway", sans-serif; 
@@ -144,7 +143,7 @@ main section img {
 }
 .msg{
     background-color: #848FA5;
-    line-height: 1.5em
+    line-height: 1.5em;
     padding: 35px;
 }
 
