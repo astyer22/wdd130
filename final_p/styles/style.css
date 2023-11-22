@@ -1,0 +1,194 @@
+/* Font stuff */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Raleway&display=swap');
+/* --heading-font: "Cinzel", sans-serif; 
+--paragraph-font: Raleway;, sans-serif */
+
+/* Content */
+
+#content{
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* body */
+
+body{
+    background-color: #848FA5;
+    font-family: "Raleway", sans-serif;
+    font-size: 22px;
+    margin: 0;
+    padding: 0;
+}
+
+/* header */
+
+header{
+    background-color: #1e456d;
+    display: grid;
+    grid-template-columns: 150px auto;
+}
+    
+#logo_link{
+    padding-top: 5px;
+    padding-top: 5px;
+    justify-self: center;
+    align-self: center;
+}
+
+.logo{
+    width: 80px;
+    border-radius: 20px;
+    border: 2px solid black;
+}
+
+.home-title{
+    color: black;
+    font-family: "Cinzel", sans-serif; 
+    font-size: 2em;
+    margin-top: 10px;
+}
+
+
+/* nav */
+
+nav {
+    display: flex;
+    justify-content: space-around;
+}
+
+nav a{
+    text-align: center;
+    color: black;
+    text-decoration: none;
+    padding: 35px;
+}
+
+nav a:hover{
+    background-color: #848FA5;
+    color: white;
+}
+
+/* Hero */
+
+#hero {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    margin-top: 50px;
+}
+
+#hero-box {
+    grid-column: 1/4;
+    grid-row: 1/2;
+    z-index: -1;
+    
+}
+
+#hero-img{
+    width: 80%;
+    height: 60%;
+    /* justify-items: center; */
+    /* justify-self: center; */
+    /* display: block; */
+    margin-right: 50px;
+    margin-left: 120px;
+    border: 10px solid #2D2D2A;
+    
+    
+}
+
+#hero-msg {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    margin-top: 40px;
+    color: white;
+    font-size: larger;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#hero-msg h1, #hero-msg p{
+    text-align: center;
+}
+
+.home-title{
+    color: White;
+    font-family: "Cinzel", sans-serif; 
+    font-size: 2em;
+    margin-top: -20px;
+}
+
+/* main */
+
+.home-main{ 
+     margin-top: -320px;
+     display: grid;
+}
+
+.discover-card{
+    border: black;
+    background-color: #1e456d;
+    margin-right: 115px;
+    margin-left: 120px;
+    margin-top: 40px
+}
+
+.discover-card h2:hover{
+    color: white;
+    background-color: #2D2D2A;
+    margin-left: 280px;
+    margin-right: 280px;
+    text-decoration: underline;
+}
+
+.discover-card h2, h5{
+    text-align: center;
+    
+}
+
+.explore-card{
+    color: black;
+    border: black;
+    background-color: #1e456d;
+    margin-right: 115px;
+    margin-left: 120px;
+    margin-bottom: -120px;
+    margin-top: 40px
+}
+
+.explore-card h2:hover{
+    color: white;
+    background-color: #2D2D2A;
+    margin-left: 270px;
+    margin-right: 270px;
+    text-decoration: underline;
+}
+
+.explore-card h2, h5{
+    text-align: center;
+}
+
+footer{
+    background-color: #1e456d;
+    color: white;
+    padding: 25px 50px;
+    margin-top: 200px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+footer a{
+    color: white;
+    text-decoration: none;
+}
+footer a:hover{
+    color: #2D2D2A;
+    text-decoration: underline;
+}   
+
+footer p {
+    font-size: 1.2em;
+}
+
+footer.social img {
+    padding-top: 15px;
+}
