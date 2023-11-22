@@ -58,14 +58,14 @@ nav {
 
 nav a{
     text-align: center;
-    color: black;
+    color: beige;
     text-decoration: none;
     padding: 35px;
 }
 
 nav a:hover{
     background-color: #848FA5;
-    color: white;
+    color: black;
 }
 
 /* Hero */
@@ -100,6 +100,7 @@ nav a:hover{
     grid-column: 2/3;
     grid-row: 1/2;
     margin-top: 40px;
+    margin-left: 20px;
     color: white;
     font-size: larger;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
@@ -110,21 +111,21 @@ nav a:hover{
 }
 
 .home-title{
-    color: White;
+    color: white;
     font-family: "Cinzel", sans-serif; 
     font-size: 2em;
     margin-top: -20px;
+    margin-left: 20px;
 }
 
 /* main */
 
 .home-main{ 
      margin-top: -320px;
-     display: grid;
 }
 
 .discover-card{
-    border: black;
+    color: beige;
     background-color: #1e456d;
     margin-right: 115px;
     margin-left: 120px;
@@ -132,7 +133,7 @@ nav a:hover{
 }
 
 .discover-card h2:hover{
-    color: white;
+    color: #848FA5;
     background-color: #2D2D2A;
     margin-left: 280px;
     margin-right: 280px;
@@ -145,8 +146,8 @@ nav a:hover{
 }
 
 .explore-card{
-    color: black;
-    border: black;
+    color: beige;
+    /* border: black; */
     background-color: #1e456d;
     margin-right: 115px;
     margin-left: 120px;
@@ -155,7 +156,7 @@ nav a:hover{
 }
 
 .explore-card h2:hover{
-    color: white;
+    color: #848FA5;
     background-color: #2D2D2A;
     margin-left: 270px;
     margin-right: 270px;
