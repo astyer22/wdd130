@@ -58,7 +58,7 @@ nav {
 
 nav a{
     text-align: center;
-    color: beige;
+    color: orangered;
     text-decoration: none;
     padding: 35px;
 }
@@ -169,7 +169,7 @@ nav a:hover{
 
 footer{
     background-color: #1e456d;
-    color: white;
+    color: orangered;
     padding: 25px 50px;
     margin-top: 200px;
     display: flex;
@@ -178,11 +178,11 @@ footer{
 }
 
 footer a{
-    color: white;
+    color: orangered;
     text-decoration: none;
 }
 footer a:hover{
-    color: #2D2D2A;
+    color: #848FA5;
     text-decoration: underline;
 }   
 

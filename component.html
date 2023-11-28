@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accordian Component Example</title>
+    <link rel="stylesheet" href="component_styles.css"
+</head>
+<body>
+
+    <h2>Austin's Christmas List</h2>
+    
+    <button class="accordion">PICKELBALL</button>
+        <div class="panel">
+      <p>ASICS Men's Upcourt 5 Indoor Sport Shoe</p>
+      <img id="pickelball" src="component_images/pickball_shoes.jpg" alt="pickel_shoes"> <br>
+      <a href="https://www.amazon.com/ASICS-Upcourt-Volleyball-Shoes-Gunmetal/dp/B09WC35HS9/ref=sr_1_3_sspa?crid=2SPSX3EQ6ZBXU&keywords=asics%2Bpickleball%2Bshoes%2Bmen&qid=1701189306&sprefix=asics%2Bpickball%2Bshoes%2Bmen%2Caps%2C154&sr=8-3-spons&sp_csd=d2lkZ2V0TmFtZT1zcF9hdGY&th=1&psc=1">Amazon Link</a>
+      
+        </div>
+    
+    <button class="accordion">HUNTING</button>
+        <div class="panel">
+      <p>357 Magnum</p>
+      <img id="Revolver" src="component_images/revolver.webp" alt="revolver"> <br>
+      <a href="https://www.cabelas.com/shop/en/taurus-raging-hunter-revolver">Cabela's Link Revolver</a>
+        </div>
+    
+    <button class="accordion">EXERCISE</button>
+        <div class="panel">
+      <p>Kettle BALL</p>
+      <img id="KettleBall" src="component_images/kettelball.jpg" alt="revolver"> <br>
+      <a href="https://www.amazon.com/Yes4All-Vinyl-Coated-Kettlebell-Weights/dp/B0093CMZ04/ref=sr_1_5?crid=1VE6TA0CQ3WNC&keywords=25%2Blb%2Bkettlebell&qid=1701190738&sprefix=25%2Blb%2Bkettle%2Caps%2C135&sr=8-5&th=1">Amazon Link KettleBall</a>
+        </div>
+    
+    <script>
+    var acc = document.getElementsByClassName("accordion");
+    var i;
+    
+    for (i = 0; i < acc.length; i++) {
+      acc[i].addEventListener("click", function() {
+        this.classList.toggle("active");
+        var panel = this.nextElementSibling;
+        if (panel.style.display === "block") {
+          panel.style.display = "none";
+        } else {
+          panel.style.display = "block";
+        }
+      });
+    }
+    </script>
+    
+</body>
+</html>
