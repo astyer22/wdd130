@@ -1,0 +1,244 @@
+/* Font stuff */
+@import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Raleway&display=swap');
+/* --heading-font: "Cinzel", sans-serif; 
+--paragraph-font: Raleway;, sans-serif */
+
+/* Content */
+
+#content{
+    max-width: 1600px;
+    margin: 0 auto;
+}
+
+/* body */
+
+body{
+    background-color: #848FA5;
+    font-family: "Raleway", sans-serif;
+    font-size: 22px;
+    margin: 0;
+    padding: 0;
+}
+
+/* header */
+
+header{
+    background-color: #1e456d;
+    display: grid;
+    grid-template-columns: 150px auto;
+}
+    
+#logo_link{
+    padding-top: 5px;
+    padding-top: 5px;
+    justify-self: center;
+    align-self: center;
+}
+
+.logo{
+    width: 80px;
+    border-radius: 20px;
+    border: 2px solid black;
+}
+
+.home-title{
+    color: black;
+    font-family: "Cinzel", sans-serif; 
+    font-size: 2em;
+    margin-top: 10px;
+}
+
+.the_what-title{
+    color:black;
+    text-align: center;
+}
+/* nav */
+
+nav {
+    display: flex;
+    justify-content: space-around;
+}
+
+nav a{
+    text-align: center;
+    color: orangered;
+    text-decoration: none;
+    padding: 35px;
+}
+
+nav a:hover{
+    background-color: #848FA5;
+    color: black;
+}
+
+/* Hero */
+
+#hero {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    margin-top: 50px;
+}
+
+#hero-box {
+    grid-column: 1/4;
+    grid-row: 1/2;
+    z-index: -1;
+    
+}
+
+#hero-img{
+    width: 80%;
+    height: 60%;
+    /* justify-items: center; */
+    /* justify-self: center; */
+    /* display: block; */
+    margin-right: 50px;
+    margin-left: 120px;
+    border: 10px solid #2D2D2A;
+    
+    
+}
+
+#hero-msg {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    margin-top: 40px;
+    margin-left: 20px;
+    color: white;
+    font-size: larger;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#hero-msg h1, #hero-msg p{
+    text-align: center;
+}
+
+.home-title{
+    color: white;
+    font-family: "Cinzel", sans-serif; 
+    font-size: 2em;
+    margin-top: -20px;
+    margin-left: 20px;
+}
+
+/* main */
+
+.home-main{ 
+     margin-top: -320px;
+}
+
+.the_what_main{
+    width: 75%;
+    margin: 0 auto;
+}
+
+.discover-card{
+    color: beige;
+    background-color: #1e456d;
+    margin-right: 115px;
+    margin-left: 120px;
+    margin-top: 40px
+}
+
+.discover-card h2:hover{
+    color: #848FA5;
+    background-color: #2D2D2A;
+    margin-left: 280px;
+    margin-right: 280px;
+    text-decoration: underline;
+}
+
+.discover-card h2, h5{
+    text-align: center;
+    
+}
+
+.explore-card{
+    color: beige;
+    /* border: black; */
+    background-color: #1e456d;
+    margin-right: 115px;
+    margin-left: 120px;
+    margin-bottom: -120px;
+    margin-top: 40px
+}
+
+.explore-card h2:hover{
+    color: #848FA5;
+    background-color: #2D2D2A;
+    margin-left: 270px;
+    margin-right: 270px;
+    text-decoration: underline;
+}
+
+.explore-card h2, h5{
+    text-align: center;
+}
+
+.panel-img{
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+footer{
+    background-color: #1e456d;
+    color: orangered;
+    padding: 25px 50px;
+    margin-top: 200px;
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+footer a{
+    color: orangered;
+    text-decoration: none;
+}
+footer a:hover{
+    color: #848FA5;
+    text-decoration: underline;
+}   
+
+footer p {
+    font-size: 1.2em;
+}
+
+footer.social img {
+    padding-top: 15px;
+}
+
+/* Style the buttons that are used to open and close the accordion panel */
+.accordion {
+    background-color: #1e456d;
+    color: beige;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: center;
+    font-size: 25PX;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+    display: grid;
+    grid-template-columns: 2fr, 3fr, 4fr;
+  }
+  
+  /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
+  .active, .accordion:hover {
+    background-color: #2D2D2A;
+    color: #848FA5
+  }
+  
+  /* Style the accordion panel. Note: hidden by default */
+  .panel {
+    padding: 0 18px;
+    background-color: #848FA5;
+    display: none;
+    overflow: hidden;
+    text-align: center;
+    border-radius: 2px;
+    border-color: black
+  }
+
+  

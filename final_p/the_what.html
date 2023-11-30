@@ -23,36 +23,17 @@
         <h1 class="the_what-title">The What</h1>
     </section>
 
-     <!-- <video autoplay muted loop id="myVideo">
-          <source src="rain.mp4" type="video/mp4">
-          Your browser does not support HTML5 video.
+    <div id="video-container">
+        <video autoplay muted loop id="myVideo" controls>
+            <source src="video/patty_clip - Made with Clipchamp.mp4" type="video/mp4">
+            Your browser does not support the video tag.
         </video>
-        
-        <div class="content">
-          <h1>Heading</h1>
-          <p>Lorem ipsum dolor sit amet, an his etiam torquatos. Tollit soleat phaedrum te duo, eum cu recteque expetendis neglegentur. Cu mentitum maiestatis persequeris pro, pri ponderum tractatos ei. Id qui nemore latine molestiae, ad mutat oblique delicatissimi pro.</p>
-          <button id="myBtn" onclick="myFunction()">Pause</button>
-        </div>
-        
-        MOVE THIS TO THE BOTTOM WITH OTHER SCRPIPT IF I GET IT TO WORK. 
-        <script>
-        var video = document.getElementById("myVideo");
-        var btn = document.getElementById("myBtn");
-        
-        function myFunction() {
-          if (video.paused) {
-            video.play();
-            btn.innerHTML = "Pause";
-          } else {
-            video.pause();
-            btn.innerHTML = "Play";
-          }
-        }
-        </script> -->
+
+    </div>
 
     <button class="accordion">What is Bigfoot?</button>
     <div class="panel">
-        <p>Bigfoot or also known as Sasquatch is an undocumented, elusive humanoid creature believed to inhabit various wilderness areas, primarily in North America. Despite being known for its purported large size, hairy appearance, and bipedal gait scientist, enthusiasts, and the everyday individual have failed in capturing a live specimen or undoubted video or photo evidence.</p>
+        <p>Bigfoot or also known as Sasquatch is an undocumented, elusive humanoid creature believed to inhabit various wilderness areas, primarily in North America. Despite being known for its purported large size, hairy appearance, and bipedal gait, scientists, enthusiasts, and the everyday individual have failed in capturing a live specimen or undoubted video or photo evidence.</p>
         <div class="panel-img">
         <img src="images/bigfoot_comparison_344x526.jpeg" alt="bigfoot_comparison_344x526">
         </div>
@@ -60,7 +41,7 @@
     
     <button class="accordion">Historical Background</button>
     <div class="panel">
-        <p>Through out the recorded time of North American history there have been varying depictions of encounters with this creature. Among Canada's First Nations people, there are traditions and oral histories of encounters with a large, ape-like creature known by various names, including Sasquatch. These stories predate European contact and continue to be part of cultural narratives.</p>
+        <p>Through out the recorded time of North American history, there have been varying depictions of encounters with this creature. Among Canada's First Nations people, there are traditions and oral histories of encounters with a large, ape-like creature known by various names, including Sasquatch. These stories predate European contact and continue to be part of cultural narratives.</p>
         <div class="panel-img">
         <img src="images/cave_painting_850x481.jpeg" alt="cave_painting">
         </div>
@@ -118,8 +99,8 @@
     }
     </script>
 
-
-<!-- <script>
+<!-- accordian script -->
+<script>
     var acc = document.getElementsByClassName("accordion");
     var panels = document.getElementsByClassName("panel");
     var i;
@@ -144,6 +125,20 @@
             }
         });
     }
-</script> -->
+</script>
+
+<!-- video script -->
+<script>
+    var video = document.getElementById("myVideo");
+    // var playPauseButton = document.getElementById("play-pause-button");
+
+    function togglePlayPause() {
+        if (video.paused) {
+            video.play();
+        } else {
+            video.pause();
+        }
+    }
+</script>
 </body>
 </html>
