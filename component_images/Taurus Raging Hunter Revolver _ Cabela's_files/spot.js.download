@@ -1,0 +1,1284 @@
+/******/ (function() { // webpackBootstrap
+/******/ 	var __webpack_modules__ = ([
+/* 0 */,
+/* 1 */
+/***/ (function() {
+
+/**
+ * "Spot" Cheetah Web Tag SDK
+ * Copyright (c) 2022 Cheetah Digital, inc.
+ *
+ * When deploying to production, please make a local copy of this file
+ * and deploy with your other website resources.  
+ *
+ */
+function SpotJs() {
+  // @private tag config
+  var config = {
+    "version": "Spot 1.6.10 2/28/2023",
+    "apiAuth": null,
+    "apiHost": null,
+    "apiSubmitRTPEvents": "/rtp/api/events",
+    "apiGetOffers": "/rtp/api/members/{id}/offers",
+    "apiGetContentTokens": "/rtp/api/members/{id}/content_tokens",
+    "apiGetDecisions": "/rtp/api/members/{id}/decisions",
+    "offersHandler": "spotOffersHandler",
+    "contentTokensHandler": "spotContentTokensHandler",
+    "decisionsHandler": "spotDecisionsHandler",
+    "apiErrorHandler": "spotApiErrorHandler",
+    "eventType": "tag",
+    "eventSubtype": "tag",
+    "eventSource": "cdtag",
+    "email_ut": null,
+    // set to email link param, e.g. "cm_em"
+    "business_unit": null,
+    "locale_code": null,
+    "dta": "device_token",
+    "uta": "user_token",
+    "sta": "session_token",
+    "dataLayerId": "spot_data",
+    "cookiePrefix": "spot_",
+    // Default 30 min
+    "sessionLength": 60 * 30,
+    // Default 2 months
+    "cookieMaxAge": 60 * 60 * 24 * 60,
+    "alwaysUpdateCookies": true,
+    "deferUnknowns": true,
+    // logLevel: 0:none, 1:error, 2:info, 3:trace
+    "logLevel": 1,
+    // map common event type name variants to standard types
+    "eventTypeAliases": {
+      "contentTokens": "content_token",
+      "content_tokens": "content_token",
+      "decisions": "decision",
+      "experiences": "experience",
+      "offers": "offer"
+    },
+    "eventActionAliases": {
+      "login": "identify",
+      "nbo": "offer",
+      "nbx": "experience",
+      "signin": "identify",
+      "logout": "signout"
+    },
+    "tagParams": {
+      "spot_user": "spot_user",
+      "spot_ut": "spot_ut",
+      "spot_uta": "spot_uta",
+      "spot_bu": "spot_bu",
+      "spot_locale": "spot_locale",
+      "spot_tp": "tp",
+      "spot_camp_id": "camp_id",
+      "spot_message_id": "message_id"
+    },
+    "standardEventParamKeys": {
+      "subtype": "event_subtype",
+      "products": "items",
+      "product_items": "items",
+      "items": "items",
+      "business_unit": "business_unit"
+    },
+    // non-cookied user params
+    "userParamKeys": {
+      "business_unit": "business_unit",
+      "locale": "locale_code",
+      "locale_code": "locale_code"
+    },
+    // Experiences
+    "experience": {
+      "sdk": "https://us-d.wayin.com/ui/ngx.embed.min.js",
+      "uta": "integration_id",
+      "successEvent": "form:entry:success",
+      "allowTransparency": "true",
+      "scrolling": "no",
+      "height": "1000",
+      "width": "600"
+    }
+  };
+  if (window.spot_config) {
+    // Spot Config can be overridden with a javascript variable on the page.
+    Object.assign(config, spot_config);
+  }
+
+  // @private user objects
+  var user = {
+      "dt": null,
+      "ut": null,
+      "st": null,
+      "uta": config.uta,
+      "business_unit": config.business_unit,
+      "locale_code": config.locale_code,
+      "optin": null,
+      "dnt": null
+    },
+    previous_user = {};
+
+  // @return object
+  var spotjs = {
+    "name": "spotjs ".concat(config.version),
+    "config": config,
+    "user": user,
+    "dataLayer": null,
+    "processedEvents": [],
+    "deferredEvents": [],
+    "sentEvents": [],
+    "pendingEvents": []
+  };
+  var emptyFn = function emptyFn() {};
+  log = emptyFn,
+  // @private logger
+  logError = emptyFn, logInfo = emptyFn, logTrace = emptyFn, initLogger = function initLogger() {
+    log = config.logLevel ? console.log.bind(window.console) : emptyFn;
+    logError = config.logLevel >= 1 ? log : emptyFn;
+    logInfo = config.logLevel >= 2 ? log : emptyFn;
+    logTrace = config.logLevel >= 3 ? log : emptyFn;
+  }, logAPIError = function logAPIError(xhr, url) {
+    var status = "",
+      responseText = xhr.responseText || "(empty)",
+      notes = "Please check your custom event parameters and server settings.";
+    if (!xhr.status) {
+      status = "0 (CORS preflight check)";
+      notes = "This happens when the API server is not configured to\n    return an Access-Control-Allow-Origin response header for this\n    website domain. This must be fixed in your server configuration.";
+    } else if (xhr.status >= 500) {
+      status = "500 (Internal Server Error)";
+    } else {
+      status = "".concat(xhr.status, " ").concat(xhr.statusText);
+    }
+    logError("spotjs received an API error\n\n    Request URL: ".concat(url, "\n\n    Response Status: ").concat(status, "\n\n    Response Body: ").concat(responseText, "\n\n    Notes: ").concat(notes, "\n    More details can be found in your network tab and server logs.\n    Please contact support if this issue persists.\n    SpotJs is still running and other API calls may still work."));
+  };
+  initLogger();
+  var setLogLevel = spotjs.setLogLevel = function (logLevel) {
+      // @public setlogLevel - set  log level (0:none, 1:error, 2:info, 3:trace)
+      if ([0, 1, 2, 3].indexOf(logLevel) !== -1) {
+        config.logLevel = logLevel;
+      }
+      initLogger();
+    },
+    // @public push event to data layer
+    push = spotjs.push = function (eventType, params) {
+      spotjs.dataLayer.push({
+        "event": eventType || config.eventType,
+        params: params
+      });
+    },
+    // @public report
+    report = spotjs.report = function () {
+      console.log("Spot Config:", spotjs.config);
+      console.group();
+      console.log("Spot Processed Events (" + spotjs.processedEvents.length + "):");
+      spotjs.processedEvents.forEach(function (key, index) {
+        console.log("event" + index + ":\n" + key);
+      });
+      console.groupEnd();
+    },
+    // @public unknown - returns true is user is unknown
+    unknown = spotjs.unknown = function () {
+      return user.uta === config.dta;
+    },
+    // @public known - returns true is user is known
+    known = spotjs.known = function () {
+      return user.uta !== config.dta;
+    },
+    // @public identify
+    identify = spotjs.identify = function (user2) {
+      spotjs.dataLayer.push({
+        "event": "identify",
+        "params": user2
+      });
+    },
+    // @public signOut - clear identity cookies
+    signOut = spotjs.signOut = function (reset) {
+      clearCookies(reset);
+      clearLocalUser(reset);
+      clearDeferredEvents(reset);
+    },
+    // @public clearCookies - clear identity cookies
+    clearCookies = spotjs.clearCookies = function (reset) {
+      logTrace("spotjs.clearCookies", reset);
+      user.ut = null;
+      user.uta = config.uta;
+      var options = {
+        "cookieMaxAge": "0",
+        "expires": "Thu, 01 Jan 1970 00:00:01 GMT"
+      };
+      setCookie("ut", "", options);
+      setCookie("uta", "", options);
+      setCookie("camp", "", options);
+      if (reset) {
+        user.dt = null;
+        user.st = null;
+        user.dnt = null;
+        setCookie("st", "", options);
+        setCookie("dt", "", options);
+        setCookie("dnt", "", options);
+      }
+    },
+    // @public setOptin - set optin and dnt
+    setOptin = spotjs.setOptin = function (optin) {
+      user.optin = optin === 0 ? 0 : 1;
+      user.dnt = user.optin === 0 ? 1 : 0;
+      setCookie("dnt", user.dnt);
+    },
+    // @private detectUser - load spot_user from querystring or variable
+    detectUser = function detectUser() {
+      var param = null,
+        user2 = null;
+      if (typeof window[config.tagParams.spot_user] !== "undefined") {
+        user2 = window[config.tagParams.spot_user];
+        logTrace("spotjs.detectUser found spot_user variable = ", user2);
+      }
+      if (!user2) {
+        param = getParam(config.tagParams.spot_user, "base64json");
+        if (param) {
+          user2 = param;
+          logTrace("spotjs.detectUser found spot_user querystring param = ", user2);
+        }
+      }
+      if (!user2) {
+        param = getParam(config.tagParams.spot_ut) || getParam(config.email_ut);
+        if (param) {
+          user2 = {
+            "ut": param,
+            "uta": getParam(config.tagParams.spot_uta) || config.uta
+          };
+          logTrace("spotjs.detectUser found spot_ut querystring param = ", user2);
+        }
+      }
+      if (!user2) {
+        user2 = getLocalUser();
+      }
+      if (user2 && typeof user2 === "object" && Object.keys(user2).length > 0) {
+        if (!user2.uta) {
+          user2.uta = config.uta;
+        }
+        logInfo("spotjs.detectUser user2 = ", user2);
+        spotjs.pendingEvents.push({
+          "event": "identify",
+          "params": user2
+        });
+      }
+      param = getParam(config.tagParams.spot_bu); // business_unit
+      if (param) {
+        user.business_unit = param;
+      }
+      param = getParam(config.tagParams.spot_locale); // locale_code
+      if (param) {
+        user.locale_code = param;
+      }
+    },
+    // @private getLocalUser
+    getLocalUser = function getLocalUser() {
+      if (window.localStorage) {
+        var s = localStorage.getItem(config.cookiePrefix + 'user'),
+          ls = JSON.parse(s) || {};
+        ls.user = ls.user || {};
+        logTrace("getLocalUser", ls);
+        // expire session if past sessionLength
+        if (ls.user.st && ls.session_ts) {
+          var dateobj = new Date();
+          if (ls.session_ts < dateobj.getMilliseconds() - config.sessionLength * 1000) {
+            delete ls.user.st;
+          }
+        }
+        return ls.user;
+      }
+    },
+    // @private setLocalUser
+    setLocalUser = function setLocalUser() {
+      if (window.localStorage) {
+        var dateobj = new Date(),
+          ls = {
+            "user": user,
+            "session_ts": dateobj.getMilliseconds()
+          };
+        logTrace("setLocalUser", ls);
+        localStorage.setItem(config.cookiePrefix + 'user', JSON.stringify(ls));
+      }
+    },
+    // @private clearLocalUser
+    clearLocalUser = function clearLocalUser() {
+      if (window.localStorage) {
+        localStorage.removeItem(config.cookiePrefix + 'user');
+      }
+    },
+    // @public initDataLayer
+    initDataLayer = spotjs.initDataLayer = function (forceReset) {
+      if (!spotjs.dataLayer || forceReset) {
+        spotjs.dataLayer = window[config.dataLayerId] = window[config.dataLayerId] || [];
+        while (spotjs.pendingEvents.length) {
+          spotjs.dataLayer.push(spotjs.pendingEvents.shift());
+        }
+        spotjs.dataLayer.push = function (e) {
+          Array.prototype.push.call(spotjs.dataLayer, e);
+          processDataLayer();
+        };
+      }
+    },
+    // @private processDataLayer
+    processDataLayer = function processDataLayer() {
+      logTrace("spotjs.processDataLayer dataLayer =", JSON.stringify(spotjs.dataLayer));
+      if (spotjs.dataLayer) {
+        while (spotjs.dataLayer.length) {
+          var data = spotjs.dataLayer.shift();
+          spotjs.processedEvents.push("spot_data.push(".concat(JSON.stringify(data), ")"));
+          logTrace("spotjs.processDataLayer data =", JSON.stringify(data));
+          if (typeof data !== "object") {
+            logTrace("spotjs.processDataLayer skipping non-object item", data);
+            continue;
+          }
+          if (data.config && typeof data.config === "object") {
+            logTrace("spotjs.processDataLayer setting config", data.config);
+            setConfig(data.config);
+          }
+          var configError = validateConfig();
+          if (configError) {
+            logError("spotjs.processDataLayer error - exiting due to invalid config:", configError);
+            spotjs.pendingEvents.push(data);
+            continue;
+          }
+          var proceed = sandboxFunction(data.before, data);
+          if (proceed === false) {
+            sandboxFunction(data.cancel, data);
+            continue;
+          }
+          if (data.event) {
+            processEvent(data);
+          }
+          sandboxFunction(data.after, data);
+        }
+      }
+    },
+    // @private sandboxFunction
+    sandboxFunction = function sandboxFunction(fnName, data) {
+      if (fnName) {
+        logTrace("spotjs.sandboxFunction", fnName, data);
+        if (typeof window[fnName] !== "function") {
+          logError("spotjs.sandboxFunction error - function", fnName, "is not a function");
+          return null;
+        }
+        try {
+          return window[fnName](data);
+        } catch (e) {
+          logError("spotjs.sandboxFunction error - function", fnName, " exception", e);
+        }
+      }
+      return null;
+    },
+    // @public setConfig
+    setConfig = spotjs.setConfig = function (config2) {
+      if (typeof config2 !== "object") {
+        logError("spotjs.setConfig error - config object is required");
+      }
+      Object.assign(config, config2);
+      logTrace("spotjs.setConfig config2 =", config2);
+      Object.assign(config, config2);
+      logTrace("spotjs.setConfig config =", config);
+      var configError = validateConfig();
+      if (configError) {
+        logError("spotjs.setConfig error - invalid config:", configError);
+        return;
+      }
+      initLogger();
+      while (spotjs.pendingEvents.length) {
+        // Process events waiting for valid config
+        spotjs.dataLayer.push(spotjs.pendingEvents.shift());
+      }
+    },
+    // @private validateConfig
+    validateConfig = function validateConfig() {
+      if (!config.apiHost) {
+        return "error: apiHost is required";
+      } else if (!config.apiAuth) {
+        return "error: apiAuth is required";
+      }
+      return false; // No errors = valid
+    },
+    // @private processEvent - main event handler
+    processEvent = function processEvent(data) {
+      // normalize event type names, e.g. "offers" >> "offer"
+      data.event = config.eventTypeAliases[data.event] || data.event;
+      if (typeof data.params !== "object") {
+        data.params = {};
+      }
+      var update_attributes = data.update_attributes || {};
+      processDoNotTrack(data);
+      processEventPayloads(data);
+      processEventActions(data);
+      if (data.action === "reset") {
+        return;
+      }
+      processEventUser(data);
+
+      // Load locale_code from update_attributes when present
+      if (update_attributes['locale_code']) {
+        user.locale_code = update_attributes['locale_code'];
+      }
+      logTrace("spotjs.processEvent building event payload from data=", data, "user=", user);
+      // Construct event payload
+      var dateobj = new Date(),
+        evt = {
+          "event_type": data.event,
+          "event_subtype": config.eventSubtype,
+          "event_ts": data.event_ts || dateobj.toISOString()
+        };
+      try {
+        evt.local_tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
+      } catch (e) {
+        evt.local_tz = "";
+      }
+      var campaign = processCampaign(data);
+      for (var _i = 0, _Object$keys = Object.keys(campaign); _i < _Object$keys.length; _i++) {
+        var key = _Object$keys[_i];
+        evt[key] = evt[key] || campaign[key];
+      }
+      evt.source = config.eventSource;
+      evt.identifier = {
+        "id": user.ut,
+        "id_field": user.uta || config.uta
+      };
+      evt[config.dta] = user.dt;
+      evt[config.sta] = user.st;
+      var standardParams = ["ut", "uta", "dt", "sta"],
+        params_json = {};
+      for (var _i2 = 0, _Object$keys2 = Object.keys(data.params); _i2 < _Object$keys2.length; _i2++) {
+        var _key = _Object$keys2[_i2];
+        var val = formatEventParam(evt.event_type, _key, data.params[_key]);
+        if (standardParams.indexOf(_key) !== -1) {
+          // Skip standard params already in the payload
+          continue;
+        } else if (typeof config.standardEventParamKeys[_key] !== "undefined") {
+          // Set standard params at the top level of the event.
+          evt[config.standardEventParamKeys[_key]] = val;
+          // Duplicate the params in params_json for debugging/traceability, but possibly remove this later.
+          params_json[config.standardEventParamKeys[_key]] = val;
+          params_json[_key] = val;
+        } else {
+          // Send custom event params in params_json
+          params_json[_key] = val;
+        }
+      }
+
+      // send the previous user if it has changed
+      if (previous_user.changed === true) {
+        params_json.previous_user = evt.previous_user = previous_user;
+        previous_user.changed = "sent";
+        if (config.deferUnknowns) {
+          processDeferredEvents();
+        }
+      }
+      if (!evt.identifier.id || redact(evt.identifier.id_field, evt.identifier.id)) {
+        evt.identifier.id = user.dt;
+        evt.identifier.id_field = config.dta;
+      }
+      params_json.user = evt.identifier;
+      if (user["dt_new"]) {
+        params_json.user.new_device = true;
+        delete user["dt_new"];
+      }
+      if (user["st_new"]) {
+        params_json.user.new_session = true;
+        delete user["st_new"];
+      }
+      if (evt.identifier.id_field === config.dta) {
+        params_json.user.unknown = true;
+        //if (params_json.user.new_device && params_json.user.new_session) { params_json.user.new_unknown = true }
+        if (config.deferUnknowns) {
+          logInfo("spotjs.processEvent - deferring unknown");
+          // preserve some evt data such as the timestamp
+          data.event_ts = evt.event_ts;
+          deferUnknownEvent(data);
+          data.send = false;
+        }
+      }
+      if (Object.keys(params_json).length) {
+        evt.params_json = params_json;
+      }
+      if (Object.keys(update_attributes).length) {
+        evt.update_attributes = update_attributes;
+      }
+      logTrace("spotjs.processEvent", evt.event_type, " evt=", evt);
+      if (data.send === false) {
+        logInfo("spotjs.processEvent exiting - do not send");
+      } else {
+        sendEvent(evt);
+      }
+
+      // for signout actions, sign them out after sending the event
+      if (data.action === "signout") {
+        clearCookies();
+        clearLocalUser();
+        clearDeferredEvents();
+      }
+      if (typeof data.getContentFn === "function") {
+        // Process content API calls after the event
+        data.getContentFn(data);
+      }
+    },
+    // @private deferUnknownEvent(
+    deferUnknownEvent = function deferUnknownEvent(data) {
+      getDeferredEvents();
+      setDeferredEvents(data);
+    },
+    // @private getDeferredEvents
+    getDeferredEvents = function getDeferredEvents() {
+      if (window.localStorage) {
+        if (spotjs.deferredEvents.length === 0) {
+          var deferredEventsLS = localStorage.getItem(config.cookiePrefix + 'deferred_events');
+          if (deferredEventsLS) {
+            spotjs.deferredEvents = JSON.parse(deferredEventsLS || "[]") || [];
+          }
+          logTrace("getDeferredEvents", "updated deferredEvents", spotjs.deferredEvents);
+        }
+      }
+    },
+    // @private clearDeferredEvents
+    clearDeferredEvents = function clearDeferredEvents(reset) {
+      if (window.localStorage) {
+        logTrace("clearDeferredEvents");
+        spotjs.deferredEvents = [];
+        localStorage.removeItem(config.cookiePrefix + 'deferred_events');
+      }
+    },
+    // @private setDeferredEvents
+    setDeferredEvents = function setDeferredEvents(data) {
+      if (window.localStorage) {
+        if (data) {
+          spotjs.deferredEvents.push(data);
+        }
+        logTrace("setDeferredEvents", "deferredEvents", spotjs.deferredEvents);
+        localStorage.setItem(config.cookiePrefix + 'deferred_events', JSON.stringify(spotjs.deferredEvents));
+      }
+    },
+    // @private processDeferredEvents
+    processDeferredEvents = function processDeferredEvents() {
+      getDeferredEvents();
+      if (spotjs.deferredEvents.length) {
+        while (spotjs.deferredEvents.length) {
+          spotjs.dataLayer.push(spotjs.deferredEvents.shift());
+        }
+        setDeferredEvents();
+      }
+    },
+    // @private processCampaign
+    processCampaign = function processCampaign(data) {
+      var campaign = {},
+        param_tp = getParam(config.tagParams.spot_tp),
+        param_camp_id = getParam(config.tagParams.spot_camp_id),
+        param_message_id = getParam(config.tagParams.spot_message_id),
+        cookieVal = getCookie("camp");
+
+      // Campaign object at top level of event data
+      if (data.campaign && typeof data.campaign === "object") {
+        campaign = data.campaign;
+      }
+      // Load MSG tp from querystring param
+      else if (param_tp) {
+        campaign.tp = param_tp;
+      }
+      // Load camp id from querystring param
+      else if (param_camp_id) {
+        campaign.camp_id = param_camp_id;
+        if (param_message_id) {
+          campaign.message_id = param_message_id;
+        }
+      }
+      // Load previously cookied campaign unless this is a new web session
+      else if (cookieVal && !user["st_new"]) {
+        var cookieJson = JSON.parse(cookieVal);
+        if (cookieJson) {
+          campaign = cookieJson;
+        }
+      }
+
+      // message_id is an alias for ext_parent_id
+      if (campaign.camp_id && campaign.message_id) {
+        campaign.ext_parent_id = campaign.message_id;
+      }
+
+      // Filter unknown keys
+      if (Object.keys(campaign).length > 0) {
+        var campKeys = ["tp", "channel_type_name", "ext_parent_id", "camp_id", "campaign_type_name", "camp_name", "content_id"];
+        for (var _i3 = 0, _Object$keys3 = Object.keys(campaign); _i3 < _Object$keys3.length; _i3++) {
+          var key = _Object$keys3[_i3];
+          if (campKeys.indexOf(key) === -1) {
+            delete campaign[key];
+          }
+        }
+      }
+      var newCookieVal = JSON.stringify(campaign);
+      if (newCookieVal !== cookieVal || config.alwaysUpdateCookies) {
+        setCookie("camp", newCookieVal);
+      }
+      return campaign;
+    },
+    // @private sendEvent - xhr transport
+    sendEvent = function sendEvent(evt) {
+      var endpoint = config.apiSubmitRTPEvents;
+      var evtId = "".concat(evt.event_type, "-").concat(spotjs.sentEvents.length),
+        url = "".concat(config.apiHost + endpoint, "?evtId=").concat(evtId),
+        xhr = new XMLHttpRequest();
+      logTrace("spotjs.sendEvent evtId =", evtId, " evt =", evt);
+      var sentEvent = {
+        "id": evtId,
+        evt: evt,
+        xhr: xhr,
+        "responseText": ""
+      };
+      spotjs.sentEvents.push(sentEvent);
+      xhr.open("POST", url, true);
+      setXhrHeaders(xhr, true);
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          if (this.status !== 200) {
+            logAPIError(this, url);
+            return false;
+          }
+          sentEvent.responseText = this.responseText || "";
+          logInfo("spotjs.sendEvent", evtId, "completed =", sentEvent.responseText);
+          return true;
+        }
+      });
+      var xhrBody = JSON.stringify(evt);
+      logInfo("spotjs.sendEvent", evtId, "sending =", xhrBody);
+      try {
+        xhr.send(xhrBody);
+      } catch (e) {
+        logError("spotjs.sendEvent received API error", e);
+      }
+    },
+    setXhrHeaders = function setXhrHeaders(xhr, contentTypeJson) {
+      xhr.setRequestHeader("Accept", "application/vnd.stellar-v1+json");
+      xhr.setRequestHeader("Authorization", config.apiAuth);
+      if (contentTypeJson) {
+        xhr.setRequestHeader("Content-Type", "application/json");
+      }
+      if (user.business_unit || config.business_unit) {
+        xhr.setRequestHeader("SL-Business-Unit", user.business_unit || config.business_unit);
+      }
+      if (user.locale_code || config.locale_code) {
+        xhr.setRequestHeader("Accept-Language", user.locale_code || config.locale_code);
+      }
+    },
+    // @private processDoNotTrack
+    processDoNotTrack = function processDoNotTrack(data) {
+      processCookie("dnt", null, data.params);
+      user.dnt = user.dnt === 1 || user.dnt === "1" ? 1 : 0;
+      data.send = user.dnt !== 1;
+    },
+    // @private processEventPayloads
+    processEventPayloads = function processEventPayloads(data) {
+      // NGX Payload
+      if (data.ngx_payload) {
+        logTrace("spotjs.processNGXPayload", data);
+
+        // Build Experiences event payload from ngx_payload
+        var payload = data.ngx_payload;
+        data.params.ngx_payload = payload;
+        data.params.subtype = payload.subtype || payload.event_subtype || "success";
+        data.campaign = payload.campaign || data.campaign || {};
+        data.campaign.camp_id = payload.camp_id || payload.id || "0";
+        data.campaign.camp_name = payload.camp_name || "ngx";
+        data.campaign.channel_type_name = payload.channel_type_name || "web";
+
+        // Identify based on NGX payload, e.g.
+        // "payload":{ "ngx_ext_id": "EMAIL HASH", ngx_ext_id_type": "integration_id" }}"
+        if (payload.ngx_ext_id) {
+          data.params.ut = payload.ngx_ext_id;
+          data.params.uta = payload.ngx_ext_id_type || config.experience.uta;
+        }
+      }
+    },
+    // @private processEventActions
+    processEventActions = function processEventActions(data) {
+      // get action from data.action or default to data.event
+      data.action = data.action || data.event;
+      // normalize action names, e.g. "login" > "identify"
+      data.action = config.eventActionAliases[data.action] || data.action;
+      logTrace("processEventActions", data.action);
+      switch (data.action) {
+        case "":
+        case "none":
+          break;
+        case "identify":
+          break;
+        case "signout":
+          // this action will send the current event and then call signOut()
+          break;
+        case "optin":
+          setOptin(1);
+          data.send = true;
+          break;
+        case "optout":
+          setOptin(0);
+          break;
+        case "reset":
+          signOut(true);
+          data.send = false;
+          break;
+        case "content_token":
+          data.getContentFn = getContentTokens;
+          break;
+        case "experience":
+        case "offer":
+        case "placement":
+          data.getContentFn = getOffers;
+          break;
+        case "decision":
+          data.getContentFn = getDecisions;
+          break;
+        default:
+          break;
+      }
+      if (data.getContentFn) {
+        data.send = true;
+      }
+    },
+    // @private processEventUser
+    processEventUser = function processEventUser(data) {
+      // clean user params
+      var params = data.params;
+      var userParamsKeys = ["dt", "ut", "uta"];
+      userParamsKeys.forEach(function (key) {
+        if (!params[key] || params[key] === "" || params[key] === "null") {
+          delete params[key];
+        }
+      });
+      // remove uta if ut is not set, which prevents this field from changing on its own
+      if (params.uta && !params.ut) {
+        delete params.uta;
+      }
+      if (params.ut || params.dt) {
+        logTrace("spotjs.processEventUser detected user params", params);
+      }
+      processCookie("dt", "{uuidv4}", data.params);
+      processCookie("ut", null, data.params);
+      processCookie("uta", user.uta || config.uta, data.params);
+      processCookie("st", "{uuidv4}", data.params, {
+        "cookieMaxAge": config.sessionLength
+      });
+
+      // Save non-cookie user params, e.g. business_unit and locale_code
+      for (var _i4 = 0, _Object$keys4 = Object.keys(config.userParamKeys); _i4 < _Object$keys4.length; _i4++) {
+        var key = _Object$keys4[_i4];
+        if (typeof params[key] !== "undefined") {
+          user[config.userParamKeys[key]] = params[key];
+        }
+      }
+      setLocalUser();
+
+      // detect changed user
+      if (!previous_user.st) {
+        logTrace("spotjs.processEventUser started a new session");
+        previous_user.changed = false;
+        // clear deferred events at the start of a new web session
+        clearDeferredEvents();
+      } else if (previous_user.dt && previous_user.dt !== user.dt) {
+        logTrace("spotjs.processEventUser changed unknown device token from=", previous_user.dt, "to ", user.dt);
+        previous_user.changed = true;
+        // clear deferred events since this is a new browser dt
+        clearDeferredEvents();
+      } else if (user.ut && user.ut !== previous_user.ut) {
+        logTrace("spotjs.processEventUser changed known user token from=", previous_user.ut, "to ", user.ut);
+        previous_user.changed = true;
+        // NB: this is the main scenario where deferred events are used, 
+        // so it is very important NOT to clear deferred events here
+      } else if (user.ut === previous_user.ut && user.uta !== previous_user.uta) {
+        logTrace("spotjs.processEventUser changed known user token attribute from=", previous_user.uta, "to ", user.uta);
+        previous_user.changed = true;
+      } else {
+        logTrace("spotjs.processEventUser did not change user");
+        previous_user.changed = false;
+      }
+    },
+    // @private processCookie
+    processCookie = function processCookie(key, defaultVal, context, options) {
+      var cookieVal = getCookie(key);
+      previous_user[key] = cookieVal || user[key];
+      if (context && context[key]) {
+        // Get value from context object if it exists, e.g. context.ut, context.dt
+        user[key] = context[key];
+      } else if (cookieVal) {
+        user[key] = cookieVal;
+      }
+      if (!user[key]) {
+        // Set default value for dt, st, uta
+        if (defaultVal === "{uuidv4}") {
+          user[key] = uuidv4();
+          user[key + "_new"] = true;
+        } else if (defaultVal !== null) {
+          user[key] = defaultVal;
+        }
+      }
+      if (user[key] !== cookieVal || config.alwaysUpdateCookies) {
+        setCookie(key, user[key], options);
+      }
+    },
+    // @private getCookie
+    getCookie = function getCookie(name) {
+      var v = document.cookie.match("(^|;) ?".concat(config.cookiePrefix).concat(name, "=([^;]*)(;|$)"));
+      var v2 = v ? v[2] : null;
+      if (v2 === "" || v2 === "null" || v2 === "redacted") {
+        v2 = null;
+      }
+      return v2;
+    },
+    // @private setCookie
+    setCookie = function setCookie(name, value, options) {
+      if (value === undefined || value === null) {
+        return;
+      }
+      options = options || {};
+      options.cookieMaxAge = options.cookieMaxAge || config.cookieMaxAge;
+      var expires = options.expires ? "Expires: ".concat(options.expires, ";") : "";
+      if (redact(name, value)) {
+        value = "redacted";
+      }
+      var c = "".concat(config.cookiePrefix + name, "=").concat(value, "; SameSite=None; Secure=true; Max-Age=").concat(options.cookieMaxAge, "; Path=/;");
+      logTrace("spotjs.setCookie c=", c);
+      document.cookie = c;
+    },
+    // @private redact - do not make use of obviously sensitive info
+    redact = function redact(name, val) {
+      // look for obvious email addresses
+      var email = /^.+@.+\..+$/;
+      if (name === "email" || email.test(val) || email.test(decodeURIComponent(val))) {
+        return "email";
+      }
+      return false;
+    },
+    // @private formatEventParam
+    formatEventParam = function formatEventParam(eventType, key, val) {
+      if (redact(key, val)) {
+        return "redacted";
+      }
+      switch (val) {
+        case "{url}":
+          return document.location.href;
+        case "{referrer}":
+          return document.location.href;
+        case "{useragent}":
+          return navigator.userAgent;
+        case "{timestamp}":
+          return new Date().toISOString();
+        default:
+          return val;
+      }
+    },
+    // @private getParam from querystring
+    getParam = function getParam(name, format) {
+      if (!name) {
+        return null;
+      }
+      var url = window.location.href;
+      name = name.replace(/[\[\]]/g, "\\$&");
+      var regex = new RegExp("[?&]".concat(name, "(=([^&#]*)|&|#|$)")),
+        results = regex.exec(url);
+      if (!results) {
+        return null;
+      }
+      if (!results[2]) {
+        return "";
+      }
+      var val = decodeURIComponent(results[2].replace(/\+/g, " "));
+      if (val && format === "base64json") {
+        try {
+          if (val.indexOf("{") !== 0) {
+            val = atob(val);
+          }
+          val = parseJSON(val);
+        } catch (e) {
+          logError("spotjs.getParam could not parse querystring param = ", name, " as", format);
+        }
+      }
+      return val;
+    },
+    // @private getContentTokens
+    getContentTokens = function getContentTokens(data) {
+      logTrace("spotjs.getContentTokens", data);
+      var params = data.params = data.params || {},
+        endpoint = config.apiGetContentTokens,
+        handler = data.handler || data.processContentToken || config.contentTokensHandler;
+      contentApi(data, params, "GET", endpoint, handler);
+    },
+    // @private getOffers
+    getOffers = function getOffers(data) {
+      logTrace("spotjs.getOffers", data);
+      var params = data.params = data.params || {};
+      params.per_page = params.per_page || params.limit || 1;
+      params.layout = params.layout || "medium_rectangle";
+      params.html = params.html !== 0;
+      var endpoint = config.apiGetOffers,
+        handler = data.handler || data.processOffer || config.offersHandler;
+      contentApi(data, params, "GET", endpoint, handler);
+    },
+    // @private getDecisions
+    getDecisions = function getDecisions(data) {
+      logTrace("spotjs.getDecisions", data);
+      var params = data.params = data.params || {};
+      if (!params.decision) {
+        logError("spotjs.getDecisions params.decision is required");
+        return false;
+      }
+      var endpoint = config.apiGetDecisions.replace("{decision}", params.decision),
+        handler = data.handler || data.processDecision || config.decisionsHandler;
+      contentApi(data, params, "PUT", endpoint, handler);
+    },
+    // @private contentApi
+    contentApi = function contentApi(data, params, protocol, endpoint, handler) {
+      if (!user.ut && !user.dt) {
+        logError("spotjs.contentApi requires a user");
+        return;
+      }
+      var url = config.apiHost + endpoint.replace("{id}", user.ut || user.dt) + formatURLParams(params);
+      var xhr = new XMLHttpRequest();
+      xhr.open(protocol, url, true);
+      setXhrHeaders(xhr, false);
+      function apiError(errorMessage, xhr) {
+        logAPIError(this, url);
+        var errorResponse = {
+            "success": false,
+            "errorMessage": errorMessage,
+            "xhr": xhr,
+            "data": null
+          },
+          apiErrorHandler = data.apiErrorHandler || config.apiErrorHandler || emptyFn;
+        return sandboxFunction(apiErrorHandler, errorResponse);
+      }
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          if (this.status !== 200) {
+            return apiError("api status is not success (200)", this, handler);
+          }
+          if (!this.response) {
+            return apiError("api response is empty", this, handler);
+          }
+          logTrace("spotjs.contentApi", this.responseText);
+          var parsedResponse = parseJSON(this.response);
+          if (!parsedResponse) {
+            return apiError("api response is not valid JSON", this, handler);
+          }
+          if (parsedResponse.success !== true) {
+            return apiError("api response does not include success=true", this, handler);
+          }
+          logInfo("spotjs.contentApi calling sandbox function", handler, data, parsedResponse);
+          parsedResponse.request_data = data;
+          var result = sandboxFunction(handler, parsedResponse);
+          logTrace("spotjs.contentApi sandbox result=", result);
+          return result;
+        }
+      });
+      logInfo("spotjs.contentApi", url);
+      try {
+        xhr.send();
+      } catch (e) {
+        logError("spotjs.contentApi received API error", e);
+      }
+    },
+    // @private formatURLParams for querystring
+    formatURLParams = function formatURLParams(params) {
+      if (typeof params !== "object" || !Object.keys(params).length > 0) {
+        return "";
+      }
+      return "?".concat(Object.keys(params).map(function (key) {
+        return "".concat(key, "=").concat(encodeURIComponent(params[key]));
+      }).join("&"));
+    },
+    // @public spotContentTokensHandler is a placeholder handler function
+    spotContentTokensHandler = spotjs.spotContentTokensHandler = window.spotContentTokensHandler = function (response) {
+      logTrace("spotjs.contentTokensHandler response=", response);
+      if (response && response.success === true && response.data) {
+        for (var _i5 = 0, _Object$keys5 = Object.keys(response.data); _i5 < _Object$keys5.length; _i5++) {
+          var key = _Object$keys5[_i5];
+          var ct = response.data[key];
+          if (!ct || !ct.variable) {
+            return;
+          }
+          var elements = document.getElementsByClassName(ct.variable); // Apply the content token to the HTML DOM
+
+          for (var i = 0, len = elements.length | 0; i < len; i = i + 1 | 0) {
+            spotApplyContentToken(ct, elements[i]);
+          }
+        }
+      }
+    },
+    // @public spotApplyContentToken applies the content token to a DOM element
+    spotApplyContentToken = function spotApplyContentToken(ct, el) {
+      if (typeof el.fadeOut === "function") {
+        el.fadeOut("slow");
+      }
+      if (el.getAttribute("data-format") && el.getAttribute("data-format") === "integer") {
+        ct.value = parseInt(ct.value);
+      }
+      if (ct.apply_to) {
+        el.setAttribute(ct.apply_to, ct.value);
+      } else {
+        el.innerHTML = ct.value;
+      }
+      if (typeof el.fadeIn === "function") {
+        el.fadeIn("slow");
+      }
+    },
+    // @public spotOffersHandler is a placeholder handler function
+    spotOffersHandler = spotjs.spotOffersHandler = window.spotOffersHandler = function (response) {
+      logInfo("spotjs.spotOffersHandler response=", response);
+      if (response && response.success === true && response.data && response.data.offers) {
+        for (var i = 0; i < response.data.offers.length; i++) {
+          var offer = response.data.offers[i];
+          if (offer) {
+            // Show Experience Web Embed
+            if (offer.extra_json.experience) {
+              spotjs.spotExperiencesHandler(response, offer);
+            } else if (offer.html) {
+              spotjs.showDialog(offer.html, offer.extra_json);
+            } else {
+              logError("offer has no content");
+            }
+          }
+        }
+      }
+    },
+    // @public spotExperiencesHandler is a sample handler for displaying a Cheetah Experience
+    // The only required setting is offer.extra_json.experience, which is the iframe url.
+    // The default experience sdk can be overridden with offer.extra_json.sdk.
+    // Any other json attributes will be applied as embed iframe attributes.
+    spotExperiencesHandler = spotjs.spotExperiencesHandler = window.spotExperiencesHandler = function (response, offer) {
+      logTrace("spotExperiencesHandler", "experience", offer);
+      var exp = Object.assign({}, config.experience, offer.extra_json);
+      if (!exp.id) {
+        exp.id = "ngxFrame" + (Math.random() * 10000 | 0);
+      }
+      if (!response.request_data.render_to) {
+        response.request_data.render_to = "experience_display";
+        spotjs.showDialog('<div id="' + response.request_data.render_to + '"></div>', exp);
+      }
+      var renderEl = document.getElementById(response.request_data.render_to);
+      renderEl.innerHTML = "";
+      var expUrl = new URL(exp.experience),
+        sdkUrl = new URL(exp.sdk);
+      var expDebug = getParam("exp_debug");
+      if (expDebug) {
+        sdkUrl.href += "&debug=" + expDebug;
+      }
+      if (expDebug) {
+        expUrl.href += "&debug=" + expDebug;
+      }
+      // Load Experience sdk, but switch the default sdk to load from the same hostname as the iframe
+      if (!offer.extra_json.sdk) {
+        sdkUrl.hostname = expUrl.hostname;
+      }
+      createAsyncResource("script", renderEl, {
+        "async": true,
+        "onload": ngxOnload,
+        "src": sdkUrl.href
+      });
+      // Load Experience iframe
+      exp.src = expUrl.href;
+      createAsyncResource("iframe", renderEl, exp);
+    },
+    // @public createAsyncResource is a createElement wrapper
+    createAsyncResource = spotjs.createAsyncResource = function (tag, renderEl, attrs) {
+      var el = document.createElement(tag);
+      attrs = attrs || {};
+      for (var _i6 = 0, _Object$keys6 = Object.keys(attrs); _i6 < _Object$keys6.length; _i6++) {
+        var key = _Object$keys6[_i6];
+        if (key !== "src" && attrs[key]) {
+          el[key] = attrs[key];
+        }
+      }
+      // add src last in case there is an onload attr
+      el.src = attrs.src;
+      renderEl.appendChild(el);
+    },
+    // @public ngxOnload is called after loading the Experiences (NGX) SDK
+    ngxOnload = spotjs.ngxOnload = function () {
+      if (NGX.Embed) {
+        // macro exp
+        NGX.Embed.registerEventHandler("app:ready", expAppReady);
+        NGX.Embed.registerEventHandler(config.experience.successEvent, expMacroSuccessHandler);
+      } else if (NGX.api) {
+        // micro exp
+        NGX.api('event:listen', 'embed:api:ready', expAppReady);
+        NGX.api('event:listen', config.experience.successEvent, expMicroSuccessHandler);
+      }
+    },
+    // @public expAppReady handles Experiences events
+    expAppReady = spotjs.expAppReady = function (e) {
+      logTrace("expAppReady", e);
+      if (spotjs.user.ut) {
+        if (NGX.Embed) {
+          // macro exp
+          logInfo("spotjs.expAppReady setting macro exp customer id=", spotjs.user.ut, spotjs.user.uta);
+          NGX.Embed.setCustomerID(spotjs.user.ut, spotjs.user.uta);
+          NGX.Embed.getCustomerID(function (id) {
+            logInfo("Experiences customer ID=", id);
+          });
+        } else if (NGX.api) {
+          // micro exp
+          logInfo("spotjs.expAppReady setting micro exp customer id=", spotjs.user.ut, spotjs.user.uta);
+          NGX.api('form:set:customerid', spotjs.user.ut, spotjs.user.uta);
+          NGX.api('form:get:customerid', function (id) {
+            logInfo("Experiences customer ID=", id);
+          });
+        }
+      }
+      // Send an experience-ready event if the Experience provides a payload
+      if (e && Object.keys(e).length) {
+        spot_data.push({
+          "event": "experience",
+          "action": "none",
+          "params": {
+            "subtype": "ready",
+            "experience": e
+          }
+        });
+      }
+    },
+    // @public expMacroSuccessHandler handles Experiences events
+    expMacroSuccessHandler = spotjs.expMacroSuccessHandler = function (e, payload) {
+      // Sample NGX payload
+      //  { "ngx_ext_id": "EMAIL HASH", ngx_ext_id_type": "integration_id" }
+
+      payload = payload || {};
+      logTrace("expMacroSuccessHandler", e, payload);
+      spot_data.push({
+        "event": "experience",
+        "action": "none",
+        "params": {
+          "subtype": "success"
+        },
+        "ngx_payload": payload
+      });
+    },
+    // @public expMicroSuccessHandler handles Experiences events
+    expMicroSuccessHandler = spotjs.expMicroSuccessHandler = function (e) {
+      // Sample NGX payload
+      //  { "ngx_ext_id": "EMAIL HASH", ngx_ext_id_type": "integration_id" }
+
+      logTrace("expMicroSuccessHandler", e.payload);
+      spot_data.push({
+        "event": "experience",
+        "action": "none",
+        "params": {
+          "subtype": "success",
+          "experience": e.info
+        },
+        "ngx_payload": e.payload
+      });
+    },
+    // @public spotDecisionsHandler is a placeholder handler function
+    spotDecisionsHandler = spotjs.spotDecisionsHandler = window.spotDecisionsHandler = function (response) {
+      logInfo("spotjs.spotDecisionsHandler response=", response);
+    },
+    // @public spotApiErrorHandler is a placeholder handler function
+    spotApiErrorHandler = spotjs.spotApiErrorHandler = window.spotApiErrorHandler = function (errorMessage, xhr, errorHandler) {
+      logError("spotjs.spotApiErrorHandler", errorMessage, xhr, errorHandler);
+    },
+    // @public showDialog - show a simple dialog. This is intended for test purposes; you should override as necessary
+    showDialog = spotjs.showDialog = window.showDialog = function (html, options) {
+      try {
+        logTrace("spotjs.showDialog", "showing dialog");
+        var body = document.getElementsByTagName("body")[0],
+          dialog = document.createElement("div"),
+          size = options.size || window.innerWidth - 50,
+          top = window.scrollY + 50,
+          left = (window.innerWidth - size) / 2,
+          style = options.style || "opacity: 0; width:".concat(size, "px; position:absolute; top:").concat(top, "px; left:").concat(left, "px; background-color: white; border: 4px solid white; padding: 4px;"),
+          close = "<div style=\"text-align:right\"><button id=\"spot_dialog_close\">X</button></div>",
+          className = options.dialogMaskStyle || "spot-dialog-mask";
+        dialog.setAttribute("id", "spot_dialog");
+        dialog.setAttribute("style", style);
+        dialog.innerHTML = close + html;
+        body.className = body.className + ' ' + className;
+        body.appendChild(dialog);
+        spotjs.fadeIn(dialog, options.fadeInTime);
+        var closeButton = document.querySelector("#spot_dialog_close");
+        closeButton.addEventListener("click", function () {
+          logTrace("spotjs.showDialog", "closing dialog");
+          body.className = body.className.replace(new RegExp('\\b' + className + '\\b', 'g'), '');
+          dialog.remove();
+        });
+      } catch (e) {
+        logError("spotjs.showDialog", e);
+      }
+    },
+    // @public fadeIn - show a simple dialog. This is intended for test purposes; you should override as necessary
+    fadeIn = spotjs.fadeIn = window.fadeIn = function (el, time) {
+      time = time || 3000;
+      el.style.opacity = 0;
+      var last = +new Date();
+      var tick = function tick() {
+        el.style.opacity = +el.style.opacity + (new Date() - last) / time;
+        last = +new Date();
+        if (+el.style.opacity < 1) {
+          window.requestAnimationFrame && requestAnimationFrame(tick) || setTimeout(tick, 16);
+        }
+      };
+      tick();
+    },
+    // @private parseJSON for safe parsing
+    parseJSON = function parseJSON(input) {
+      try {
+        return JSON.parse(input);
+      } catch (e) {
+        logError("spotjs.parseJSON could not parse input", input, e);
+      }
+      return "";
+    },
+    // @private uuidv4
+    uuidv4 = function uuidv4() {
+      return "xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx".replace(/[xy]/g, function (c) {
+        var r = Math.random() * 16 | 0,
+          v = c == "x" ? r : r & 0x3 | 0x8;
+        return v.toString(16);
+      });
+    };
+  initLogger();
+  spotjs.instance = uuidv4();
+  detectUser(); // Detect user state prior to processing any events
+
+  initDataLayer(); // Init the array of events to process
+
+  processDataLayer(); // Finally, process any existing events
+
+  logInfo(spotjs.name, "ready", spotjs.instance);
+  return spotjs;
+}
+if (!window.spotjs) {
+  window.spotjs = SpotJs();
+}
+
+/***/ })
+/******/ 	]);
+/************************************************************************/
+/******/ 	// The module cache
+/******/ 	var __webpack_module_cache__ = {};
+/******/ 	
+/******/ 	// The require function
+/******/ 	function __webpack_require__(moduleId) {
+/******/ 		// Check if module is in cache
+/******/ 		var cachedModule = __webpack_module_cache__[moduleId];
+/******/ 		if (cachedModule !== undefined) {
+/******/ 			return cachedModule.exports;
+/******/ 		}
+/******/ 		// Create a new module (and put it into the cache)
+/******/ 		var module = __webpack_module_cache__[moduleId] = {
+/******/ 			// no module.id needed
+/******/ 			// no module.loaded needed
+/******/ 			exports: {}
+/******/ 		};
+/******/ 	
+/******/ 		// Execute the module function
+/******/ 		__webpack_modules__[moduleId](module, module.exports, __webpack_require__);
+/******/ 	
+/******/ 		// Return the exports of the module
+/******/ 		return module.exports;
+/******/ 	}
+/******/ 	
+/************************************************************************/
+var __webpack_exports__ = {};
+// This entry need to be wrapped in an IIFE because it need to be isolated against other modules in the chunk.
+!function() {
+__webpack_require__(1);
+}();
+/******/ })()
+;

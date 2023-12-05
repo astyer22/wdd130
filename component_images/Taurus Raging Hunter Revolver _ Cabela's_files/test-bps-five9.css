@@ -1,0 +1,252 @@
+:root {
+    --primaryGreen: rgba(79, 107, 87, 1);
+    --neutralGray: #F6F4F1;
+}
+
+/* Hide provider link */
+.provider, .provider:hover, .provider:focus, .provider-text {
+    cursor: default !important;
+    display: none !important;
+}
+
+/* ======CHAT TAB====== */
+.five9-frame #five9-popout-button {
+    background-image: url(https://assets.basspro.com/image/upload/v1695325587/DigitalCreative/Site-Elements/Live-Chat/five9/open-icon-white.png) !important ;
+}
+
+.five9-chat-button {
+    background: var(--primaryGreen) !important;
+    padding: 12px 12px 0 39px !important;
+    /* display: block !important; */
+}
+
+.five9-frame {
+    bottom: -2px !important;
+}
+
+.five9-frame .five9-frame-full .five9-header {
+    width: 100%;
+}
+
+.five9-frame #five9-minimize-icon {
+    margin-left: 172px;
+}
+
+/* .five9-frame #five9-popout-button {
+    display: none !important;
+} */
+
+.five9-chat-button:after {
+    content: 'LIVE CHAT' !important;
+    float: left;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 18px;
+    line-height: 18px;
+}
+
+
+.five9-chat-button .five9-icon {
+    background-image: url(https://assets.basspro.com/image/upload/v1695325899/DigitalCreative/Site-Elements/Live-Chat/five9/icon-chat.png) !important;
+    width: 24px;
+    height: 24px;
+    top: 8px !important;
+    background-size: 24px 24px;
+}
+
+.five9-frame .five9-text {
+    display: none !important;
+}
+
+
+/* ====HIDES PERSISTENT TAB===== */
+/* .five9-frame-minimized {
+    display: none !important;
+} */
+
+/* .five9-frame #five9-minimize-icon {
+    background-image: url(https://assets.basspro.com/image/upload/v1694811793/DigitalCreative/2023/Site-Elements/Icons/icon-close-white.png) !important;
+} */
+/* ========================= */
+
+/* ============= CHAT BOX  STYLING=============== */
+
+.ui-page {
+    background-color: var(--neutralGray);
+}
+
+.ui-input-text.ui-body-inherit.ui-corner-all.ui-shadow-inset {
+    background-color: #fff;
+    border-radius: 0 !important;
+}
+
+.ui-input-text {
+    font-size: 12px !important;
+}
+
+label#profiles-label {
+    display: none !important;
+}
+
+#profiles-button {
+    display: none;
+}
+
+.ui-header {
+    background-color: var(--primaryGreen);
+    padding: 10px 0;
+    display: flex;
+    border: none !important;
+    border-width: 0 !important;
+}
+
+.ui-header .ui-title, .ui-footer .ui-title {
+    font-size: 12px !important;
+    white-space: normal !important;
+    text-align: left !important;
+    padding: 0 1rem !important;
+    max-width: 1360px;
+    margin: 0 auto !important;
+}
+
+h1.ui-title::before {
+    content: "Chats are transcribed for quality purposes. You may receive a survey asking about the Outfitter you are about to talk to.";
+    /* BPS */
+    font-family: 'Cabin', sans-serif;
+    /* CAB */
+    /* font-family: 'Open Sans', sans-serif; */
+    display: block;
+    font-size: 12px;
+    line-height: 15.6px;
+    white-space: pre-wrap;
+    padding: 8px;
+    text-align: left;
+}
+
+h1.ui-title {
+    color: #fff;
+}
+
+h1.fill-title.ui-title {
+    color: #fff;
+}
+
+.ui-content {
+    top: 80px !important;
+    left: 50%;
+    transform: translateX(-50%);
+    max-width: 400px !important;
+    width: 90% !important;
+}
+
+.ui-content > div {
+    font-size: 12px !important;
+}
+
+.form-control {
+    padding-top: 11px !important;
+}
+
+.ui-footer {
+    height: auto !important;
+}
+
+@media (min-width: 768px) {
+    .ui-content:not(div.chat-content) {
+        top: 40% !important;
+        transform: translate(-50%, -50%);
+    }
+
+    .chat-content {
+        max-width: 90% !important;
+    }
+
+    .ui-footer {
+        max-width: 600px;
+        margin: auto;
+    }
+}
+
+@media (max-width: 480px) {
+    .five9-frame {
+        right: unset !important;
+        left: 50% !important;
+        transform: translateX(-50%) !important;
+    }
+}
+
+/* ========BUTTON=========== */
+button.five9-action-btn {
+    font-size: 16px !important;
+    background-color: var(--primaryGreen) !important;
+    padding: 8px 16px !important;
+    color: #fff !important;
+    margin: 0 auto 16px !important;
+    width: auto !important;
+    max-height: 100% !important;
+    height: auto !important;
+    border-radius: 0 !important;
+    max-width: 400px !important;
+    width: 90% !important;
+    text-transform: uppercase !important;
+}
+
+button.five9-action-btn.start-over-button.ui-btn.ui-shadow.ui-corner-all {
+    font-size: 16px;
+    background-color: var(--primaryGreen);
+    padding: 8px 16px;
+    color: #fff
+}
+
+/* =========IN CHAT INPUT========== */
+
+
+.input-message-div {
+
+}
+/* ============FULL PAGE============= */
+
+
+/* ============CLOSE BUTTON============= */
+
+#terminate-connecting-button, #terminate-conversation-button,  #close-button {
+    color: #fff;
+    right: 0px !important;
+    top: unset !important;
+    bottom: 0px !important;
+
+}
+
+.terminate-chat-popup .five9-confirm-btn, .terminate-chat-popup .five9-cancel-btn, .ui-popup-content > p {
+    color: #fff !important;
+    text-align: center !important;
+}
+
+/* ========CHAT ENDED====== */
+.end-chat-container {
+    padding: 16px 0 !important
+}
+
+.end-who, .thank-you {
+    font-family: "Cabin", sans-serif !important;
+}
+
+.end-who {
+    margin-top: 16px !important;
+}
+
+div.inner-container  {
+    width: auto !important;
+}
+
+.message-container {
+    background-color: #fff;
+    margin: 8px;
+}
+
+.message-client-client {
+    text-align: right !important;
+}
+
+.chat-input-message-container.ui-footer.ui-bar-d.ui-footer-fixed.slideup {
+    padding-bottom: 1rem;
+}

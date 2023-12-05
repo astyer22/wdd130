@@ -1,0 +1,14 @@
+(async function () {
+
+
+var rangeObj = document.createRange(); var documentFragment = rangeObj.createContextualFragment ('<script type="text/javascript">\n(function () {\nwindow.setTimeout(function() {\nvar e = document.createElement(\'script\'); e.type = \'text/javascript\'; e.async = true;\ne.src = (\'https:\' == document.location.protocol ? \'https://\' : \'http://\') + \'www.lightboxcdn.com/vendor/7580d666-471b-4ede-abc6-ac286611721e/lightbox.js?mb=\' + (new Date().getTime());\nvar s = document.getElementsByTagName(\'script\')[0]; s.parentNode.insertBefore(e, s);\n}, 500);\n})();\n</script>'); document.body.appendChild(documentFragment);
+
+
+
+var s = document.createElement('script'); s.text = '(function() { var SITEID=\'bass-pro\';\n if (typeof _bt === \'undefined\' && typeof window._bt === \'undefined\') {\n\n(function(b, t, r, a, i, n) {\n    b[\'bt\']=b[\'bt\'] || function() {\n        (b[\'_bt\']=b[\'_bt\']||[]).push(arguments);\n    },\n    i = t.createElement(r),\n    n = t.getElementsByTagName(r)[0];\n    i.async = 1;\n    i.src = a;\n    n.parentNode.insertBefore(i, n);\n})(\n    window,\n    document,\n    \'script\',\n 	\'https://cdn.boomtrain.com/p13n/\'+SITEID+\'/p13n.min.js\'\n);\n }\nbt(\'initialize\', SITEID, {externalIds: {zync: \'f092b404-9276-49c7-91a0-6906866aa38e:1696942720.3726537\'}}); })();'; document.body.appendChild(s);
+
+
+
+
+
+})();
