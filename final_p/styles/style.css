@@ -1,6 +1,7 @@
 /* Font stuff */
 @import url('https://fonts.googleapis.com/css2?family=Cinzel&family=Raleway&display=swap');
 /* --heading-font: "Cinzel", sans-serif; 
+/* --heading-font: "Cinzel", sans-serif; 
 --paragraph-font: Raleway;, sans-serif */
 
 /* Content */
@@ -514,4 +515,45 @@ form {
     text-align: center;
     margin-top: 20px; /* Adjust as needed for spacing */
     color: black
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+      font-size: 16px; /* Adjust the font size for smaller screens */
+  }
+
+  header {
+      grid-template-columns: 1fr; /* Adjust header layout for smaller screens */
+  }
+
+  nav {
+      flex-direction: column; /* Stack navigation links vertically on smaller screens */
+  }
+
+  nav a {
+      padding: 15px; /* Reduce padding for navigation links on smaller screens */
+  }
+
+  #hero {
+      grid-template-columns: 1fr; /* Stack hero elements vertically on smaller screens */
+  }
+
+  #hero-img {
+      width: 100%; /* Make the hero image full width on smaller screens */
+      margin: 0; /* Remove unnecessary margins */
+  }
+
+  #hero-msg {
+      margin: 20px; /* Add margin to hero message on smaller screens */
+  }
+
+  .home-title {
+      margin-top: 0; /* Adjust margin for home title on smaller screens */
+  }
+
+  .home-main {
+      margin-top: 0; /* Adjust margin for home main on smaller screens */
+  }
+
+  /* ... (adjust other styles as needed for smaller screens) ... */
 }
