@@ -19,6 +19,22 @@
                 <a href="images.html">Images</a>
                 <a href="eye_witnesses.html">Eye Witnesses</a>
             </nav>
+  
+            <script>
+                function submitForm(event) {
+                    event.preventDefault(); // Prevent the form from submitting the traditional way
+            
+                    // You can add AJAX code here to send the form data to the server asynchronously if needed
+            
+                    // Display a thank you message
+                    document.getElementById("encounter").innerHTML = "<p>Thank you for your submission!</p>";
+            
+                    // Redirect the user to the home page after a delay (e.g., 3 seconds)
+                    setTimeout(function () {
+                        window.location.href = "index.html";
+                    }, 3000); // Adjust the delay as needed
+                }
+            </script>
         </header>
 </main>
 <div class="eye_witness">
@@ -57,7 +73,7 @@
 
     <main class="from-main"> 
         <div id="encounter"></div>
-        <form action="send_email.php" method="post"> 
+        <form id="encounterForm" action="send_email.php" method="post" onsubmit="submitForm(event)"> 
               <ul>
                   <li>
                     <label for="name">Name:</label>
@@ -75,11 +91,12 @@
                     <button type="submit">Send your message</button>
                   </li>
                 </ul>
-              </form>
         </form>
 
         <!-- Need to add a page to thanking them for their submission -->
     </div> 
+    <div id="encounterForm"></div>
+
     <footer>
         <p>&copy;2023 Austin Styer</p>
         <a href="site-plan.html">Site Plan</a>

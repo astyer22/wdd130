@@ -95,7 +95,7 @@ nav a:hover{
     /* justify-self: center; */
     /* display: block; */
     margin-right: 50px;
-    margin-left: 120px;
+    margin-left: 142px;
     border: 10px solid #2D2D2A;
     
     
@@ -177,6 +177,28 @@ nav a:hover{
     text-align: center;
 }
 
+.eyewitness-card {
+  color: beige;
+    /* border: black; */
+    background-color: #1e456d;
+    margin-right: 115px;
+    margin-left: 120px;
+    margin-bottom: -50px;
+    margin-top: 160px
+}
+
+.eyewitness-card h2:hover{
+  color: #848FA5;
+  background-color: #2D2D2A;
+  margin-left: 270px;
+  margin-right: 270px;
+  text-decoration: underline;
+}
+
+.eyewitness-card h2, h5{
+  text-align: center;
+}
+
 .panel-img{
     display: block;
     margin-left: auto;
@@ -212,25 +234,21 @@ footer.social img {
 
 /* accordian */
 /* Style the buttons that are used to open and close the accordion panel */
-.accordion-container {
-  display: grid;
-  grid-template-columns: 2fr 3fr 4fr;
-}
-
 .accordion {
-  background-color: #1e456d;
-  color: beige;
-  cursor: pointer;
-  padding: 18px;
-  width: 100%;
-  text-align: center;
-  font-size: 25PX;
-  border: none;
-  outline: none;
-  transition: 0.4s;
-  display: grid;
-  grid-template-columns: 2fr 3fr 4fr;
-
+    background-color: #1e456d;
+    color: beige;
+    cursor: pointer;
+    padding: 18px;
+    width: 100%;
+    text-align: center;
+    font-size: 25PX;
+    border: none;
+    outline: none;
+    transition: 0.4s;
+    display: grid;
+    grid-template-columns: 2fr 3fr 4fr;
+  }
+  
   /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
   .active, .accordion:hover {
     background-color: #2D2D2A;
@@ -491,3 +509,9 @@ form {
     font-size: 30px;
 
   }
+
+  #encounter {
+    text-align: center;
+    margin-top: 20px; /* Adjust as needed for spacing */
+    color: black
+}
