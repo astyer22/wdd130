@@ -246,7 +246,7 @@ footer.social img {
     outline: none;
     transition: 0.4s;
     display: grid;
-    grid-template-columns: 2fr 3fr 4fr;
+    grid-template-columns: 2fr, 3fr, 4fr;
   }
   
   /* Add a background color to the button if it is clicked on (add the .active class with JS), and when you move the mouse over it (hover) */
@@ -359,8 +359,8 @@ video {
   }
 
   #myBtnContainer {
-    margin-left: 70px;
-    font-size: 20px;
+    margin-left: 225px;
+    font-size: 15px;
   }
 
   .row{
