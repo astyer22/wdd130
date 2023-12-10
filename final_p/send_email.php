@@ -5,7 +5,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $message = $_POST["user_message"];
 
     // Create the email content
-    $to = "sasquatchmayhem@sasquatchmayhem.com";
+    $to = "sasquatchmayhem@gmail.com";
     $subject = "New Bigfoot Encounter Submission";
     $headers = "From: $email";
 
