@@ -178,6 +178,8 @@ nav a:hover{
   color: beige;
     /* border: black; */
     background-color: #1e456d;
+    margin-left: 120px;
+    margin-bottom: -120px;
     margin-bottom: -50px;
     margin-top: 160px
 }
@@ -185,8 +187,6 @@ nav a:hover{
 .eyewitness-card h2:hover{
   color: #848FA5;
   background-color: #2D2D2A;
-  margin-left: 270px;
-  margin-right: 270px;
   text-decoration: underline;
   font-size: 33px;
 }
