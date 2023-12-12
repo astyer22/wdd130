@@ -380,7 +380,7 @@ video {
   .modal-content {
     margin: auto;
     display: block;
-    max-width: 800px;
+    max-width: 500px;
     max-height: 600px;
   }
   
@@ -399,7 +399,7 @@ video {
   }
 
   #myModal img {
-    max-width: 100%;
+    max-width: auto;
     height: auto;
   }
 
