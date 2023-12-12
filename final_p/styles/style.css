@@ -399,7 +399,7 @@ video {
   }
 
   #myModal img {
-    max-width: auto;
+    max-width: 500px;
     height: auto;
   }
 
