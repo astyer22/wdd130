@@ -1,0 +1,45 @@
+#hero {
+    display: grid;
+    grid-template-columns: 1fr 3fr 1fr;
+    margin-top: 50px;
+}
+
+#hero-box {
+    grid-column: 1/4;
+    grid-row: 1/2;
+    z-index: -1;
+    
+}
+
+#hero-img{
+    width: 80%;
+    height: 60%;
+    /* justify-items: center; */
+    /* justify-self: center; */
+    /* display: block; */
+    margin-right: 50px;
+    margin-left: 142px;
+    border: 10px solid #2D2D2A;
+}
+
+#hero-msg {
+    grid-column: 2/3;
+    grid-row: 1/2;
+    margin-top: 40px;
+    margin-left: 20px;
+    color: white;
+    font-size: larger;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+#hero-msg h1, #hero-msg p{
+    text-align: center;
+}
+
+.home-title{
+    color: white;
+    font-family: "Cinzel", sans-serif; 
+    font-size: 2em;
+    margin-top: -20px;
+    margin-left: 20px;
+}
